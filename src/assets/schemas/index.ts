@@ -5,7 +5,11 @@ const registerSchema = Yup.object({
     email: Yup.string().email("Email is invalid").required("Email is required"),
     password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
     confirmPassword: Yup.string().required("Confirm Password is required").oneOf([Yup.ref("password")], "Password and Confirm Password must be match")
-
 })
 
-export { registerSchema };
+const loginSchema = Yup.object({
+    username_or_email: Yup.string().required("Email is requierd"),
+    password: Yup.string().min(8).required("Password is required")
+})
+
+export { registerSchema, loginSchema };

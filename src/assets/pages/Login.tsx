@@ -1,48 +1,54 @@
-"use client";
+import { useFormik } from 'formik';
+import { loginSchema } from "../schemas";
 
-import { useState } from "react";
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const Login = () => {
+  const initialValues = {
+    username_or_email: "",
+    password: "",
+  }
 
-  const handleSubmit = (e:any) => {
-    e.preventDefault();
-    // Frontend-only and no actual login functionality
-    console.log("Logging in with:", { email, password });
-  };
+  const {values, errors, touched, handleChange, handleSubmit, handleBlur} = useFormik({
+    initialValues: initialValues,
+    validationSchema: loginSchema,
+    onSubmit: async (values) => {
+      console.log(values)
+    }
+  });
 
   return (
-    <div>
+    <>
       <div className="screenMiddleDiv">
         <div className="formDiv">
           <form onSubmit={handleSubmit}>
             <h2 className="text-center">Login</h2>
 
             <div>
-              <label htmlFor="email" className="formLabel">
-                Email Address
+              <label htmlFor="usernameOrEmail" className="formLabel">
+                Username Or Email
               </label>
               <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                type="text"
+                name="username_or_email"
+                value={values.username_or_email}
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
+              {errors.username_or_email && touched.username_or_email ? <span className="formError">{errors.username_or_email}</span> : null}
             </div>
 
             <div className="my-6">
               <label htmlFor="password" className="formLabel">
                 Password
               </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+                <input
+                  type="password"
+                  name="password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              {errors.password && touched.password ? <span className="formError">{errors.password}</span> : null}
+              </div>
 
             <button type="submit" className="formButton">
               Login
@@ -56,7 +62,7 @@ function Login() {
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
