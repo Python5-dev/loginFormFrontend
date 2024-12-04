@@ -1,7 +1,12 @@
 import { useFormik } from 'formik';
 import { loginSchema } from "../schemas";
+import axios from 'axios';
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
   const initialValues = {
     username_or_email: "",
     password: "",
@@ -10,13 +15,31 @@ const Login = () => {
   const {values, errors, touched, handleChange, handleSubmit, handleBlur} = useFormik({
     initialValues: initialValues,
     validationSchema: loginSchema,
-    onSubmit: async (values) => {
-      console.log(values)
+    onSubmit: async (values, action) => {
+      try {
+        const res = await axios.post("http://127.0.0.1:8000/login/", values);
+        if(res.status === 200){
+          localStorage.setItem("access token", res.data.access);
+          localStorage.setItem("refresh token", res.data.refresh);
+          messageApi.open({
+            type: "success",
+            content: res.data.message,
+          })
+          navigate("/dashboard");
+        }
+      } catch (error:any) {
+        messageApi.open({
+          type: "error",
+          content: error.response.data.error,
+        })
+      }
+      action.resetForm();
     }
   });
 
   return (
     <>
+      {contextHolder}
       <div className="screenMiddleDiv">
         <div className="formDiv">
           <form onSubmit={handleSubmit}>
